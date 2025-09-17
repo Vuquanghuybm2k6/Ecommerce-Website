@@ -2,6 +2,9 @@ const express = require('express'); // trong cái đoạn require này k ghi m�
 const app = express(); // Khởi tạo ứng dụng Express
 const route = require("./routes/client/index.route.js") // cái hàm require này giống như hàm import trong js
 const port = 3000;
+
+require('dotenv').config()
+
 // Muốn sử dụng được pug thì phải có hai dòng  này
 app.set("views", "./views"); // Thiết lập đường dẫn đến thư mục chứa các file view (template Pug)
 // Express sẽ hiểu các file view nằm trong thư mục ./views

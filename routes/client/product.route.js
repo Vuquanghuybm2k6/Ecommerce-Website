@@ -4,9 +4,5 @@ const router = express.Router(); // Tạo một Router riêng biệt, dùng đ�
 
 const controller = require("../../controllers/client/product.controller")
 
-router.get('/', (req,res)=>{ //Đây là route xử lý khi có HTTP GET đến đường dẫn /. 
-//Tại sao chỉ là get('/) thì bởi vì trong file index.route.js ta có file trang chủ là /product nên ở đây ta chỉ cần ghi get('/') thì có thể dẫn đến trang chủ luôn rồi 
-//Nghĩa là: Khi người dùng vào đường link như http://localhost:3000/products thì nó sẽ chạy hàm này.
-  res.render('client/pages/products/index.pug') // Dùng để render file Pug thành HTML và trả về cho người dùng.
-})
+router.get('/', controller.index);
 module.exports = router; //Export router để có thể import nó vào file khác (thường là index.route.js )
