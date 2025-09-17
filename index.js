@@ -14,6 +14,9 @@ app.set("view engine", "pug"); // Cấu hình Pug làm template engine để ren
 // Trong file index.route.js ta đã viết module.exports = (app) => { ... }
 // => giờ ta gọi route(app) để gắn các route vào ứng dụng chính
 
+app.use(express.static("public")); // Cung cấp tệp tĩnh (CSS, JS, hình ảnh...) 
+
+
 // Routes
 route(app);
 // Routes

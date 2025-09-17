@@ -3,8 +3,11 @@ html
  head  
   //- gọi biến pageTitle từ trong home.controller và product.controller
   title #{pageTitle} 
+  link(rel = "stylesheet", src = "https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css")
+  link(rel = "stylesheet", href = "/css/style.css")
 
  body 
+
  //-  file header ta sẽ viết ở thư mục khác(partials), ta sẽ nhúng file mà ta đã viết header vào trong đây
  include ../partials/header 
 
@@ -13,3 +16,8 @@ html
   //- tương tự với footer
 
   include ../partials/footer
+
+
+  script(src= "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js")
+  script(src = "https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js")
+  script(src = "/js/script.js")
