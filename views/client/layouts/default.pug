@@ -1,0 +1,15 @@
+doctype html 
+html
+ head  
+  //- gọi biến pageTitle từ trong home.controller và product.controller
+  title #{pageTitle} 
+
+ body 
+ //-  file header ta sẽ viết ở thư mục khác(partials), ta sẽ nhúng file mà ta đã viết header vào trong đây
+ include ../partials/header 
+
+  block main
+
+  //- tương tự với footer
+
+  include ../partials/footer
