@@ -1,4 +1,19 @@
 //- từ file index.pug ở folder products, ta ../ để đi ra ngoài folder products, ../ thêm lần nữa để đi ra ngoài folder pages rồi bắt đầu vào folder layouts
 extends ../../layouts/default.pug
-block main 
- h1 Trang danh sách sản phẩm
+include ../../mixins/box-head.pug
+block main
+  .container.my-3
+    .row
+      .col-12
+        +box-head("Danh sách sản phẩm")
+
+    .row
+      .col-4.mb-3
+        .product-item
+          .inner-image
+            img(src="https://cdn.dummyjson.com/product-images/beauty/red-nail-polish/thumbnail.webp", alt="iPhone 9")
+          .inner-content
+            h3.inner-title Red Nail Polish
+            .inner-price-new 7.96$
+            .inner-price-old 8.99$
+            .inner-discount -11.44%
