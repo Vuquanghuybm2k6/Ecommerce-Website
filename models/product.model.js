@@ -11,5 +11,5 @@ const productSchema = new mongoose.Schema({
   position: Number,
   deleted: Boolean
 });
-const Product = mongoose.model('Product', productSchema, "products  "); // tham số thứ 3 "products" là cái tên connection trong database
+const Product = mongoose.model("Product", productSchema, "products"); // tham số thứ 3 "products" là cái tên connection trong database
 module.exports = Product;
