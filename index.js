@@ -3,7 +3,8 @@ require('dotenv').config() // phải có dòng lệnh này thì mới chạy đ�
  
 const database = require("./config/database.js");
 database.connect();
-const route = require("./routes/client/index.route.js");
+const routeClient = require("./routes/client/index.route.js"); // import route bên phía client
+const routeAdmin = require("./routes/admin/index.route.js"); // import route bên phía admin
 
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGO_URL);
@@ -21,7 +22,8 @@ app.set("view engine", "pug"); // Cấu hình Pug làm template engine để ren
 // => giờ ta gọi route(app) để gắn các route vào ứng dụng chính
 app.use(express.static("public")); // Cung cấp tệp tĩnh (CSS, JS, hình ảnh...) 
 // Routes
-route(app);
+routeAdmin(app)
+routeClient(app);
 // Routes
 
 app.listen(port, () => {
