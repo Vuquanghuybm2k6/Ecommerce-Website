@@ -3,8 +3,12 @@ require('dotenv').config() // phải có dòng lệnh này thì mới chạy đ�
  
 const database = require("./config/database.js");
 database.connect();
-const routeClient = require("./routes/client/index.route.js"); // import route bên phía client
-const routeAdmin = require("./routes/admin/index.route.js"); // import route bên phía admin
+
+const systemConfig = require("./config/system.js")// import  hàm này vào file index.js
+
+const routeAdmin = require("./routes/admin/index.route"); // import route bên phía admin
+const route = require("./routes/client/index.route"); // import route bên phía client
+
 
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGO_URL);
@@ -16,14 +20,19 @@ const port = process.env.PORT;// lấy giá trị PORT từ file .env
 app.set("views", "./views"); // Thiết lập đường dẫn đến thư mục chứa các file view (template Pug)
 // Express sẽ hiểu các file view nằm trong thư mục ./views
 app.set("view engine", "pug"); // Cấu hình Pug làm template engine để render giao diện
- 
+
+// App Locals Variables
+app.locals.prefixAdmin = systemConfig.prefixAdmin; // cái biến prefix sẽ tồn tại trong tất cả các file pug() để có thể sử dụng được các giá trị trong file system.js
+
+// End App Locals Variables
+
 // Gọi hàm route() và truyền app vào
 // Trong file index.route.js ta đã viết module.exports = (app) => { ... }
 // => giờ ta gọi route(app) để gắn các route vào ứng dụng chính
 app.use(express.static("public")); // Cung cấp tệp tĩnh (CSS, JS, hình ảnh...) 
 // Routes
 routeAdmin(app)
-routeClient(app);
+route(app);
 // Routes
 
 app.listen(port, () => {
