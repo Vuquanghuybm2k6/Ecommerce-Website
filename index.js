@@ -23,7 +23,7 @@ app.set("view engine", "pug"); // Cấu hình Pug làm template engine để ren
 
 // App Locals Variables
 app.locals.prefixAdmin = systemConfig.prefixAdmin; // cái biến prefix sẽ tồn tại trong tất cả các file pug() để có thể sử dụng được các giá trị trong file system.js
-
+// app.locals là một câu khai báo biến
 // End App Locals Variables
 
 // Gọi hàm route() và truyền app vào
