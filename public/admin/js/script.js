@@ -69,16 +69,16 @@ if (formSearch) { // Nếu form tồn tại thì mới gắn sự kiện, tránh
         // và else branch sẽ chạy, gọi url.searchParams.delete("status")
         // Đây dường như là **lỗi logic**: bạn có vẻ muốn kiểm tra 'keyword' chứ không phải 'status',
         // và nếu keyword rỗng thì nên xóa param "keyword" chứ không phải "status".
-        if (status) {
+        if (keyword) {
             url.searchParams.set("keyword", keyword);
         } else {
-            url.searchParams.delete("status");
+            url.searchParams.delete("keyword");
         }
-
+        window.location.href = url.href;
         // In đối tượng URL ra console (dùng để debug)
         // Lưu ý: console.log(url) in ra đối tượng URL; nếu muốn chuỗi URL hãy dùng console.log(url.href)
         console.log(url);
     });
 }
 
-// Form Search
+// End Form Search
