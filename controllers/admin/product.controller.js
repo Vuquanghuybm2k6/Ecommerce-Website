@@ -2,7 +2,8 @@
 // Model này được định nghĩa bằng Mongoose để thao tác với collection 'products' trong MongoDB
 const Product = require("../../models/product.model");
 
-const filterStatusHelper = require("../../helpers/filterStatus")
+const filterStatusHelper = require("../../helpers/filterStatus.js")
+const searchHelper = require("../../helpers/search.js")
 // Định nghĩa hàm controller xử lý request GET /admin/products
 // Hàm này sẽ được router gọi khi người dùng truy cập đường dẫn /admin/products
 module.exports.index = async (req, res) => {
@@ -22,20 +23,13 @@ module.exports.index = async (req, res) => {
     // Sau bước này, find có thể trở thành:
     // { deleted: false, status: "active" }
   }
-  let keyword = ""
-  // Kiểm tra xem URL có chứa tham số query 'status' hay không
-  // Ví dụ: /admin/products?status=active
-  // Nếu có, thêm điều kiện status vào bộ lọc find
-  if (req.query.keyword) {
-    keyword = req.query.keyword;
-    // Tạo một biểu thức tìm kiếm (regex) từ từ khóa người dùng nhập vào
-    // - new RegExp(keyword, "i") sẽ tạo một "mẫu tìm kiếm" không phân biệt chữ hoa/thường
-    // - Ví dụ: nếu keyword = "iphone", thì regex sẽ là /iphone/i
-    // - Điều này giúp tìm được cả các sản phẩm có title là "iPhone 13", "IPHONE 14", v.v.
-    const regex = new RegExp(keyword, "i");
-    find.title = regex;// find.title là tìm kiểm những bản ghi có title = "tên mình vừa tìm kiếm"
+  const objectSearch = searchHelper(req.query)
+  console.log(objectSearch)
+  
+  if(objectSearch.regex){
+    
+    find.title = objectSearch.regex;
   }
-
   // TRUY VẤN DỮ LIỆU TỪ MONGODB
 
   // Dùng Product.find(find) để lấy danh sách sản phẩm thỏa điều kiện find
@@ -54,6 +48,6 @@ module.exports.index = async (req, res) => {
     filterStatus: filterStatus, // truyền filterStatus vào view
     // Mục đích: view sẽ dùng filterStatus để vẽ nút lọc
     // (mỗi nút lấy .name, .status và nếu .class === "active" thì highlight)
-    keyword: keyword // cái này để truyền giá trị cho value
+    keyword: objectSearch.keyword // cái này để truyền giá trị cho value
   });
 };
