@@ -1,5 +1,4 @@
-// Import (yêu cầu) model Product từ file models/product.model.js
-// Model này được định nghĩa bằng Mongoose để thao tác với collection 'products' trong MongoDB
+
 const Product = require("../../models/product.model");
 
 const filterStatusHelper = require("../../helpers/filterStatus.js")
@@ -43,9 +42,6 @@ module.exports.index = async (req, res) => {
   console.log(objectPagination.skip)
 
   // TRUY VẤN DỮ LIỆU TỪ MONGODB
-
-  // Dùng Product.find(find) để lấy danh sách sản phẩm thỏa điều kiện find
-  // await dừng hàm cho đến khi truy vấn hoàn tất (vì Product.find trả về Promise)
   const products = await Product.find(find).limit(objectPagination.limitItems).skip(objectPagination.skip);
   // cái phần limit là giới hạn số sản phầm được in ra 1 trang
   // cái phầm skip(Number) thì là dừng in ra ngoài giao diện từ phần tử thứ bao nhiêu
@@ -62,3 +58,18 @@ module.exports.index = async (req, res) => {
     pagination: objectPagination
   });
 };
+// [GET] /admin/products/change-status/:status/:id
+module.exports.changeStatus = async (req, res)=>{
+  console.log(req.params)// req.params là cái biến chứa route động ( cái route mà có dấu ":")
+   // lấy ra id và status 
+  const status = req.params.status
+  const id = req.params.id
+  await Product.updateOne({_id: id},{status: status});
+  // hàm updateOne đọc tài liệu trong Mongoose, dùng để update trạng thái 1 sản phẩm lên database, nó có 2 object
+  // cứ liên quan đến truy vấn thì mở mongoose lên để đọc doc
+  res.redirect(req.get("Referer") ) // khi mà ta click vào trạng thái ở phần sp bên phía admin thì nó sẽ tự động nhảy sang trang khác
+  // hàm này để nó tự động quay về đúng trang hiện tại, đọc doc trên expres phần API reference 5.x -> response -> method ->res.direct
+  //req.get(headerName) trong Express dùng để lấy giá trị của một HTTP header từ request.
+  //res.redirect(req.get("Referer")) Lệnh này bảo Express: chuyển hướng về URL lưu trong Referer.
+
+}

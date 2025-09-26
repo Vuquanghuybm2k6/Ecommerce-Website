@@ -43,11 +43,32 @@ block main
                 td #{item.price}$
                 td
                   if(item.status == "active")
-                    a(href="#" class="badge badge-success") Hoạt động
+                    a(
+                      href="javascript: ;" 
+                      data-status = item.status
+                      data-id = item.id
+                      button-change-status 
+                      class="badge badge-success" ) Hoạt động
                   else
-                    a(href="#" class="badge badge-danger") Dừng hoạt động
+                    //- cái href="javascript: ;" để máy hiểu rằng ta đang bắt sự kiện bằng javascript 
+                    a(
+                      href="javascript: ;" 
+                      data-status = item.status
+                      data-id = item.id
+                      button-change-status 
+                      class="badge badge-danger") Dừng hoạt động
                 td
                   //- dùng bootstrap để css cho các nút
                   button(class="btn btn-warning btn-sm") Sửa
                   button(class="btn btn-danger btn-sm ml-1") Xóa
   +pagination(pagination)
+  //- trong cái html(pug) thì chỉ có 2 phương thức là get hoặc post thôi, muốn có thêm thì cài npm i method-override để ghi đè
+  //- nếu trong cái file product.js ở folder public là phương thức PATCH thì ở đây luôn phải để là POST
+  form(
+    action = ``
+    method ="POST"
+    id = "form-change-status"
+    data-path = `${prefixAdmin}/products/change-status`
+    )
+
+  script(src ="/admin/js/product.js")

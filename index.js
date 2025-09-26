@@ -16,6 +16,8 @@ mongoose.connect(process.env.MONGO_URL);
 const app = express();
 const port = process.env.PORT;// lấy giá trị PORT từ file .env
 
+var methodOverride = require('method-override')
+app.use(methodOverride('_method'))
 // Muốn sử dụng được pug thì phải có hai dòng  này
 app.set("views", "./views"); // Thiết lập đường dẫn đến thư mục chứa các file view (template Pug)
 // Express sẽ hiểu các file view nằm trong thư mục ./views
@@ -26,9 +28,6 @@ app.locals.prefixAdmin = systemConfig.prefixAdmin; // cái biến prefix sẽ t�
 // app.locals là một câu khai báo biến
 // End App Locals Variables
 
-// Gọi hàm route() và truyền app vào
-// Trong file index.route.js ta đã viết module.exports = (app) => { ... }
-// => giờ ta gọi route(app) để gắn các route vào ứng dụng chính
 app.use(express.static("public")); // Cung cấp tệp tĩnh (CSS, JS, hình ảnh...) 
 // Routes
 routeAdmin(app)
