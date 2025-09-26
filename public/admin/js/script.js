@@ -82,3 +82,20 @@ if (formSearch) { // Nếu form tồn tại thì mới gắn sự kiện, tránh
 }
 
 // End Form Search
+
+// Pagination
+const buttonsPagination = document.querySelectorAll("[button-pagination]")
+console.log(buttonsPagination)
+if(buttonsPagination){
+  let url = new URL(window.location.href)
+  buttonsPagination.forEach(button =>{
+  button.addEventListener("click", ()=>{
+    const page = button.getAttribute("button-pagination") 
+      url.searchParams.set("page", page)
+    
+    window.location.href = url.href
+  })
+})
+
+}
+// End Pagination

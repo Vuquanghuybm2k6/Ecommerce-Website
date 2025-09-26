@@ -27,14 +27,33 @@ module.exports.index = async (req, res) => {
   console.log(objectSearch)
   
   if(objectSearch.regex){
-    
     find.title = objectSearch.regex;
   }
+  // Pagination
+  let objectPagination ={
+    currentPage : 1,
+    limitItems : 4
+  }
+  if(req.query.page){
+    objectPagination.currentPage = parseInt(req.query.page);
+  }
+  objectPagination.skip = (objectPagination.currentPage-1)*objectPagination.limitItems;
+  const countProducts = await Product.countDocuments(find);// hàm đếm số lượng sp trong mongoose
+  console.log(countProducts);
+  const totalPage = Math.ceil(countProducts /objectPagination.limitItems);
+  console.log(totalPage)
+  objectPagination.totalPage = totalPage // thêm tổng số trang 
+  // End Pagination
+  console.log(objectPagination.skip)
+
   // TRUY VẤN DỮ LIỆU TỪ MONGODB
 
   // Dùng Product.find(find) để lấy danh sách sản phẩm thỏa điều kiện find
   // await dừng hàm cho đến khi truy vấn hoàn tất (vì Product.find trả về Promise)
-  const products = await Product.find(find);
+  const products = await Product.find(find).limit(objectPagination.limitItems).skip(objectPagination.skip); 
+  // cái phần limit là giới hạn số sản phầm được in ra 1 trang
+  // cái phầm skip(Number) thì là dừng in ra ngoài giao diện từ phần tử thứ bao nhiêu
+
 
   // RENDER VIEW VỚI DỮ LIỆU LẤY ĐƯỢC
 
@@ -48,6 +67,7 @@ module.exports.index = async (req, res) => {
     filterStatus: filterStatus, // truyền filterStatus vào view
     // Mục đích: view sẽ dùng filterStatus để vẽ nút lọc
     // (mỗi nút lấy .name, .status và nếu .class === "active" thì highlight)
-    keyword: objectSearch.keyword // cái này để truyền giá trị cho value
+    keyword: objectSearch.keyword, // cái này để truyền giá trị cho value
+    pagination : objectPagination
   });
 };
