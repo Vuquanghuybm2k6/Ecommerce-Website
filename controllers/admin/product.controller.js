@@ -89,3 +89,12 @@ module.exports.changeStatus = async (req, res)=>{
   }
   res.redirect(req.get("Referer") )
 }
+
+ // [PATCH] /admin/products/delete/:id
+ // xóa cứng, mất luôn trong database
+module.exports.delete = async (req,res)=>{
+  const id = req.params.id;
+  await Product.deleteOne({ _id: id })
+  res.redirect(req.get("Referer") )
+
+}

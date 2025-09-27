@@ -72,7 +72,11 @@ block main
                 td
                   //- dùng bootstrap để css cho các nút
                   button(class="btn btn-warning btn-sm") Sửa
-                  button(class="btn btn-danger btn-sm ml-1") Xóa
+                  button(
+                    class="btn btn-danger btn-sm ml-1"
+                    button-delete 
+                    data-id = item.id 
+                    ) Xóa
   +pagination(pagination)
   //- trong cái html(pug) thì chỉ có 2 phương thức là get hoặc post thôi, muốn có thêm thì cài npm i method-override để ghi đè
   //- nếu trong cái file product.js ở folder public là phương thức PATCH thì ở đây luôn phải để là POST
@@ -81,6 +85,12 @@ block main
     method ="POST"
     id = "form-change-status"
     data-path = `${prefixAdmin}/products/change-status`
+    )
+  form(
+    action = ``
+    method ="POST"
+    id = "form-delete-item"
+    data-id = `${prefixAdmin}/products/delete`
     )
 
   script(src ="/admin/js/product.js")
