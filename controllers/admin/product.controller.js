@@ -89,12 +89,25 @@ module.exports.changeStatus = async (req, res)=>{
   }
   res.redirect(req.get("Referer") )
 }
-
+ // Xóa vĩnh viễn, mất luôn trong database
  // [PATCH] /admin/products/delete/:id
- // xóa cứng, mất luôn trong database
+// module.exports.delete = async (req,res)=>{
+//   const id = req.params.id;
+//   await Product.deleteOne({ _id: id })
+//   res.redirect(req.get("Referer") )
+// }
+ // End xóa vĩnh viễn
+
+  // Xóa mềm
+ // [PATCH] /admin/products/delete/:id
 module.exports.delete = async (req,res)=>{
   const id = req.params.id;
-  await Product.deleteOne({ _id: id })
+  await Product.updateOne(
+    { _id: id },
+     { deleted : true,
+      deletedAt : new Date() // thời gian xóa vào khi nào
+     }
+    );
   res.redirect(req.get("Referer") )
-
 }
+ // End xóa mềm
