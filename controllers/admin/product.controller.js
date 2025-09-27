@@ -71,5 +71,21 @@ module.exports.changeStatus = async (req, res)=>{
   // hàm này để nó tự động quay về đúng trang hiện tại, đọc doc trên expres phần API reference 5.x -> response -> method ->res.direct
   //req.get(headerName) trong Express dùng để lấy giá trị của một HTTP header từ request.
   //res.redirect(req.get("Referer")) Lệnh này bảo Express: chuyển hướng về URL lưu trong Referer.
-
+}
+ // [PATCH] /admin/products/change-multi
+ module.exports.changeMulti = async (req,res) =>{
+  //console.log(req.body); // phải cài đặt thư viện body-parse trong npm thì khi gửi lên mới lấy ra dc thuộc tính 
+    const type = req.body.type
+  const ids = req.body.ids.split(", ").map(id => id.trim());
+  switch(type){
+    case "active":
+     await Product.updateMany({ _id: { $in: ids }},{ status: "active"})
+     break;
+    case "inactive":
+     await Product.updateMany({ _id: { $in : ids }}, {status: "inactive"})
+     break;
+    default:
+     break;
+  }
+  res.redirect(req.get("Referer") )
 }

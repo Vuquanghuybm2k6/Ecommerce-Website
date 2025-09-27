@@ -99,3 +99,60 @@ if (buttonsPagination) {
 
 }
 // End Pagination
+// Checkbox
+const checkboxMulti = document.querySelector("[checkbox-multi]")
+if (checkboxMulti) {
+  const inputCheckAll = checkboxMulti.querySelector("input[name='checkall']");
+  const inputsId = checkboxMulti.querySelectorAll("input[name= 'id']");
+  inputCheckAll.addEventListener("click", () => {
+    if (inputCheckAll.checked) {
+      inputsId.forEach((input) => {
+        input.checked = true;
+      })
+    } else {
+
+      inputsId.forEach((input) => {
+        input.checked = false;
+      })
+    }
+  })
+
+  inputsId.forEach((input) => {
+    input.addEventListener("click", () => {
+      const countChecked = checkboxMulti.querySelectorAll("input[name='id']:checked").length
+      if (countChecked == inputsId.length) {
+        inputCheckAll.checked = true
+      }
+      else{
+        inputCheckAll.checked = false
+      }
+    })
+  })
+}
+// End Checkbox
+
+// Form Change Multi
+const formChangeMulti = document.querySelector("[form-change-multi]")
+if(formChangeMulti){
+  formChangeMulti.addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const checkboxMulti = document.querySelector("[checkbox-multi]")
+    const inputsCheck = document.querySelectorAll("input[name='id']:checked")
+    if(inputsCheck.length>0){
+      let ids = [];
+      const inputIds = formChangeMulti.querySelector("input[name='ids']")
+      inputsCheck.forEach(input =>{
+        const id = input.value;
+        ids.push(id)
+      })
+      inputIds.value = ids.join(", ")
+      console.log(ids.join(", "));
+      formChangeMulti.submit();
+    }
+    else{
+      alert("Vui lòng nhập lại")
+    }
+  })
+}
+
+// End Form Change Multi
