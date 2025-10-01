@@ -79,13 +79,16 @@ module.exports.changeStatus = async (req, res)=>{
   const ids = req.body.ids.split(", ").map(id => id.trim());
   switch(type){
     case "active":
-     await Product.updateMany({ _id: { $in: ids }},{ status: "active"})
-     break;
+      await Product.updateMany({ _id: { $in: ids }},{ status: "active"})
+      break;
     case "inactive":
-     await Product.updateMany({ _id: { $in : ids }}, {status: "inactive"})
-     break;
+      await Product.updateMany({ _id: { $in : ids }}, {status: "inactive"})
+      break;
+    case "delete-all":
+      await Product.updateMany({ _id: { $in : ids }}, {deleted: true, deletedAt : new Date() })
+      break;
     default:
-     break;
+      break;
   }
   res.redirect(req.get("Referer") )
 }
