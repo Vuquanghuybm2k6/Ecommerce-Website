@@ -1,32 +1,56 @@
-const express = require('express'); 
-require('dotenv').config() 
- 
+const express = require('express');
+require('dotenv').config()
+
 const database = require("./config/database.js");
 database.connect();
 
 const systemConfig = require("./config/system.js")
+const session = require("express-session")
+const cookieParser = require("cookie-parser")
 
-const routeAdmin = require("./routes/admin/index.route"); 
-const route = require("./routes/client/index.route"); 
+// Route
+const routeAdmin = require("./routes/admin/index.route");
+const route = require("./routes/client/index.route");
+// End Route
 
-
+// Mongoose
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGO_URL);
+// End Mongoose
 
 const app = express();
 const port = process.env.PORT;
 
+// Flash
+// cái thư viện express-flash là để giúp fe hiển thị thông báo
+var flash = require('express-flash') // cái key  'express-flash' là một key bất kì, đặt tên khác cũng được, chỉ mình mình biết
+app.use(cookieParser('keyboard cat')); // lưu vào trong cookie , muốn dùng được cookieParser thì phải cài npm i cookie-parser
+app.use(session({ // muốn dùng cái dòng này phải npm i express-session
+  secret: 'keyboard cat', // ❗ bắt buộc phải có
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 60000
+  }
+}));
+app.use(flash());
+// End Flash
+
+// Method Override
 var methodOverride = require('method-override')
 app.use(methodOverride('_method'))
+// End Method Override
 
+// Body Parser
 const bodyParser = require('body-parser')
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({extended : false}))
+app.use(bodyParser.urlencoded({
+  extended: false
+}))
+// End Body Parser
 
-// Muốn sử dụng được pug thì phải có hai dòng  này
-app.set("views", "./views"); // Thiết lập đường dẫn đến thư mục chứa các file view (template Pug)
-// Express sẽ hiểu các file view nằm trong thư mục ./views
-app.set("view engine", "pug"); // Cấu hình Pug làm template engine để render giao diện
+
+app.set("views", "./views");
+app.set("view engine", "pug");
 
 // App Locals Variables
 app.locals.prefixAdmin = systemConfig.prefixAdmin; // cái biến prefix sẽ tồn tại trong tất cả các file pug() để có thể sử dụng được các giá trị trong file system.js

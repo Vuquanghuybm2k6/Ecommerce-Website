@@ -3,7 +3,9 @@ include ../../mixins/filter-status.pug
 include ../../mixins/search.pug
 include ../../mixins/pagination.pug
 include ../../mixins/form-change-multi.pug
+include ../../mixins/alert.pug
 block main 
+  +alert-success(5000)
   h1 Danh sách sản phẩm
   .card.mb-3 
     .card-header Bộ lọc và tìm kiếm 
@@ -26,7 +28,7 @@ block main
           thead
             tr
               th 
-               input(type ="checkbox" name ="checkall")
+                input(type ="checkbox" name ="checkall")
               th STT
               th Hình ảnh
               th Tiêu đề
@@ -39,11 +41,11 @@ block main
             each item, index in products
               tr
                 td
-                 input(
-                  type = "checkbox"
-                  name ="id"
-                  value =item.id
-                 ) 
+                  input(
+                    type = "checkbox"
+                    name ="id"
+                    value =item.id
+                  ) 
                 td #{index +1}
                 td
                   img(
