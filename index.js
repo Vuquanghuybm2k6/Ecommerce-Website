@@ -16,6 +16,8 @@ const route = require("./routes/client/index.route");
 // Mongoose
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGO_URL);
+var slug = require('mongoose-slug-updater');
+mongoose.plugin(slug);
 // End Mongoose
 
 const app = express();

@@ -4,6 +4,7 @@ const Product = require("../../models/product.model");
 const filterStatusHelper = require("../../helpers/filterStatus.js")
 const searchHelper = require("../../helpers/search.js")
 const paginationHelper = require("../../helpers/pagination.js")
+const systemConfig = require("../../config/system.js")
 
 module.exports.index = async (req, res) => {
   console.log(req.query.status)
@@ -87,7 +88,6 @@ module.exports.changeStatus = async (req, res)=>{
         console.log(id)
         console.log(position)
         await Product.updateOne({ _id: id}, {position: position}) // không thể updateMany được vì có nhiều sản phẩm và nhiều position khác nhau
-
       }
      // await Product.updateMany({ _id: { $in : ids }}, {deleted: true, deletedAt : new Date() })
       
@@ -110,3 +110,28 @@ module.exports.delete = async (req,res)=>{
   res.redirect(req.get("Referer") )
 }
  // End xóa mềm
+
+ //[GET] : /admin/products/create
+ module.exports.create = async (req, res) => {
+  res.render('admin/pages/products/create', {
+    pageTitle: "Thêm mới sản phẩm", 
+  });
+};
+
+ //[POST] : /admin/products/create
+ module.exports.createPost = async (req, res) => {
+  req.body.price = parseInt(req.body.price)
+  req.body.discountPercentage = parseInt(req.body.discountPercentage)
+  req.body.stock = parseInt(req.body.stock)
+  if(req.body.position == ""){ 
+    const countProduct = await Product.countDocuments()
+    req.body.position = countProduct +1;
+  }
+  else{
+    req.body.position = parseInt(req.body.position)
+  }
+  const product = new Product(req.body) // new Product là tạo mới một sp đọc doc trên mongoose
+  await product.save() // khi ta tạo mới 1 sp như ở dòng trên thì nó mới lưu ở trong model, vậy nên dòng này để lưu vào trong database
+  console.log(req.body)
+  res.redirect(`${systemConfig.prefixAdmin}/products`)
+};
