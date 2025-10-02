@@ -2,12 +2,13 @@ extends ../../layouts/default.pug
 include ../../mixins/alert.pug
 block main 
   +alert-success(5000)
-  h1(class = "mb-4") Thêm mới sản phẩm 
+  +alert-error(5000)
+  h1(class = "mb-4") Chỉnh sửa sản phẩm
   form(
     enctype="multipart/form-data"
-    action = `${prefixAdmin}/products/create`
+    action = `${prefixAdmin}/products/edit/${product._id}?_method=PATCH`
     method ="POST"
-    id = "form-create-product"
+    id = "form-edit-product"
   )
     div(class = "form-group")
       label(for = "title") Tiêu đề
@@ -17,6 +18,7 @@ block main
         id = "title"
         name = "title"
         required
+        value = product.title
       )
     div(class = "form-group")
       label(for = "desc") Mô tả
@@ -25,15 +27,15 @@ block main
         id = "desc"
         name = "description"
         row = "5"
-      )
+      ) #{product.description}
     div(class = "form-group")
-      label(for = "price") Giá
+      label(for = "price") Giá $
       input(
         type = "number"
         class = "form-control"
         id = "price"
         name = "price"
-        value = "0"
+        value = product.price
         min = "0"
       )
     div(class = "form-group")
@@ -43,7 +45,7 @@ block main
         class = "form-control"
         id = "discount"
         name = "discountPercentage"
-        value = "0"
+        value = product.discountPercentage
         min = "0"
       )
     div(class = "form-group")
@@ -53,7 +55,7 @@ block main
         class = "form-control"
         id = "stock"
         name = "stock"
-        value = "0"
+        value = product.stock
         min = "0"
       )
     div(class = "form-group")
@@ -63,7 +65,13 @@ block main
         class = "form-control-file"
         id = "thumbnail"
         name = "thumbnail"
-        accept = "image"
+        accept = "image/*"
+        upload-image-input
+      )
+      img(
+        src = product.thumbnail
+        upload-image-preview 
+        class = "image-preview"
       )
     div(class = "form-group")
       label(for = "position") Vị trí
@@ -74,6 +82,7 @@ block main
         name = "position"
         placeholder = "Tự động tăng"
         min = "1"
+        value = product.position
       )
     div(class="form-group form-check form-check-inline")
       input(
@@ -82,7 +91,7 @@ block main
         id="statusActive"
         name="status"
         value="active"
-        checked
+        checked = (product.status == "active" ? true : false)
       )
       label(for="statusActive" class="form-check-label") Hoạt động
 
@@ -93,6 +102,7 @@ block main
         id="statusInactive"
         name="status"
         value="inactive"
+        checked = (product.status == "inactive" ? true : false)
       )
       label(for="statusInactive" class="form-check-label") Dừng hoạt động
 
@@ -100,7 +110,7 @@ block main
       button( 
         type="submit"
         class = "btn btn-primary"
-        ) Tạo mới
+        ) Chỉnh sửa
 
 
   script(src = "/admin/js/product.js")

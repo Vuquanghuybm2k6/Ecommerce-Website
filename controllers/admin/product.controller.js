@@ -1,4 +1,3 @@
-
 const Product = require("../../models/product.model");
 
 const filterStatusHelper = require("../../helpers/filterStatus.js")
@@ -18,7 +17,7 @@ module.exports.index = async (req, res) => {
   };
   if (req.query.status) {
     find.status = req.query.status;
-  
+
   }
   const objectSearch = searchHelper(req.query)
   console.log(objectSearch)
@@ -40,9 +39,11 @@ module.exports.index = async (req, res) => {
 
   // TRUY VẤN DỮ LIỆU TỪ MONGODB
   const products = await Product.find(find)
-  .sort({position : "desc"}) // desc là sx theo giảm dần nghĩa là cái nào tạo sau thì hiển thị lên trước
-  .limit(objectPagination.limitItems)
-  .skip(objectPagination.skip);
+    .sort({
+      position: "desc"
+    }) // desc là sx theo giảm dần nghĩa là cái nào tạo sau thì hiển thị lên trước
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
 
   res.render('admin/pages/products/index', {
     pageTitle: "Danh sách sản phẩm", // hiển thị trên tiêu đề trang
@@ -53,90 +54,161 @@ module.exports.index = async (req, res) => {
   });
 };
 // [GET] /admin/products/change-status/:status/:id
-module.exports.changeStatus = async (req, res)=>{
-  console.log(req.params)// req.params là cái biến chứa route động ( cái route mà có dấu ":")
-   // lấy ra id và status 
+module.exports.changeStatus = async (req, res) => {
+  console.log(req.params) // req.params là cái biến chứa route động ( cái route mà có dấu ":")
+  // lấy ra id và status 
   const status = req.params.status
   const id = req.params.id
-  await Product.updateOne({_id: id},{status: status});
-  
+  await Product.updateOne({
+    _id: id
+  }, {
+    status: status
+  });
+
   req.flash("success", "Cập nhật trạng thái thành công")
-  res.redirect(req.get("Referer") ) 
+  res.redirect(req.get("Referer"))
 }
- // [PATCH] /admin/products/change-multi
- module.exports.changeMulti = async (req,res) =>{
+// [PATCH] /admin/products/change-multi
+module.exports.changeMulti = async (req, res) => {
   //console.log(req.body); // phải cài đặt thư viện body-parse trong npm thì khi gửi lên mới lấy ra dc thuộc tính 
-    const type = req.body.type
+  const type = req.body.type
   const ids = req.body.ids.split(", ").map(id => id.trim());
-  switch(type){
+  switch (type) {
     case "active":
-      await Product.updateMany({ _id: { $in: ids }},{ status: "active"})
+      await Product.updateMany({
+        _id: {
+          $in: ids
+        }
+      }, {
+        status: "active"
+      })
       req.flash("success", `Cập nhật trạng thái thành công ${ids.length} sản phẩm!`)
       break;
     case "inactive":
-      await Product.updateMany({ _id: { $in : ids }}, {status: "inactive"})
+      await Product.updateMany({
+        _id: {
+          $in: ids
+        }
+      }, {
+        status: "inactive"
+      })
       req.flash("success", `Cập nhật trạng thái thành công ${ids.length} sản phẩm!`)
       break;
     case "delete-all":
-      await Product.updateMany({ _id: { $in : ids }}, {deleted: true, deletedAt : new Date() })
+      await Product.updateMany({
+        _id: {
+          $in: ids
+        }
+      }, {
+        deleted: true,
+        deletedAt: new Date()
+      })
       break;
     case "change-position":
       console.log(ids)
-      for(const item of ids){
+      for (const item of ids) {
         let [id, position] = item.split("-");
         position = parseInt(position)
         console.log(id)
         console.log(position)
-        await Product.updateOne({ _id: id}, {position: position}) // không thể updateMany được vì có nhiều sản phẩm và nhiều position khác nhau
+        await Product.updateOne({
+          _id: id
+        }, {
+          position: position
+        }) // không thể updateMany được vì có nhiều sản phẩm và nhiều position khác nhau
       }
-     // await Product.updateMany({ _id: { $in : ids }}, {deleted: true, deletedAt : new Date() })
-      
-    default:
-      break;
+      // await Product.updateMany({ _id: { $in : ids }}, {deleted: true, deletedAt : new Date() })
+
+      default:
+        break;
   }
-  res.redirect(req.get("Referer") )
+  res.redirect(req.get("Referer"))
 }
 
-  // Xóa mềm
- // [PATCH] /admin/products/delete/:id
-module.exports.delete = async (req,res)=>{
+// Xóa mềm
+// [PATCH] /admin/products/delete/:id
+module.exports.delete = async (req, res) => {
   const id = req.params.id;
-  await Product.updateOne(
-    { _id: id },
-     { deleted : true,
-      deletedAt : new Date() // thời gian xóa vào khi nào
-     }
-    );
-  res.redirect(req.get("Referer") )
+  await Product.updateOne({
+    _id: id
+  }, {
+    deleted: true,
+    deletedAt: new Date() // thời gian xóa vào khi nào
+  });
+  res.redirect(req.get("Referer"))
 }
- // End xóa mềm
+// End xóa mềm
 
- //[GET] : /admin/products/create
- module.exports.create = async (req, res) => {
+//[GET] : /admin/products/create
+module.exports.create = async (req, res) => {
   res.render('admin/pages/products/create', {
-    pageTitle: "Thêm mới sản phẩm", 
+    pageTitle: "Thêm mới sản phẩm",
   });
 };
 
- //[POST] : /admin/products/create
- module.exports.createPost = async (req, res) => {
+//[POST] : /admin/products/create
+module.exports.createPost = async (req, res) => {
 
   console.log(req.file)
   req.body.price = parseInt(req.body.price)
   req.body.discountPercentage = parseInt(req.body.discountPercentage)
   req.body.stock = parseInt(req.body.stock)
-  if(req.body.position == ""){ 
+  if (req.body.position == "") {
     const countProduct = await Product.countDocuments()
-    req.body.position = countProduct +1;
-  }
-  else{
+    req.body.position = countProduct + 1;
+  } else {
     req.body.position = parseInt(req.body.position)
   }
-  if(req.file){ // check xem file ngta vừa up lên xem có tồn tại hay k rồi mới gán vào
+  if (req.file) { // check xem file ngta vừa up lên xem có tồn tại hay k rồi mới gán vào
     req.body.thumbnail = `/uploads/${req.file.filename}` // phải có đường dẫn /uploads thì mới xem được file ảnh 
   }
   const product = new Product(req.body) // new Product là tạo mới một sp đọc doc trên mongoose
   await product.save() // khi ta tạo mới 1 sp như ở dòng trên thì nó mới lưu ở trong model, vậy nên dòng này để lưu vào trong database
   console.log(req.body)
   res.redirect(`${systemConfig.prefixAdmin}/products`)
+};
+
+
+//[GET] : /admin/products/edit/:id
+module.exports.edit = async (req, res) => {
+  try {
+    const find = {
+      deleted: false,
+      _id: req.params.id
+    }
+    const product = await Product.findOne(find)
+    res.render('admin/pages/products/edit', {
+      pageTitle: "Chỉnh sửa sản phẩm",
+      product: product
+    });
+  } catch (error) {
+    res.redirect(`${systemConfig.prefixAdmin}/products`)
+  }
+};
+
+//[PATCH] : /admin/products/edit/:id
+module.exports.editPatch = async (req, res) => {
+  console.log(req.body);
+  res.send("ok")
+};
+
+//[PATCH] : /admin/products/create
+module.exports.editPatch = async (req, res) => {
+  const id = req.params.id
+  req.body.price = parseInt(req.body.price)
+  req.body.discountPercentage = parseInt(req.body.discountPercentage)
+  req.body.stock = parseInt(req.body.stock)
+  req.body.position = parseInt(req.body.position)
+  if (req.file) { // check xem file ngta vừa up lên xem có tồn tại hay k rồi mới gán vào
+    req.body.thumbnail = `/uploads/${req.file.filename}` // phải có đường dẫn /uploads thì mới xem được file ảnh 
+  }
+  console.log(req.body)
+  try {
+    await Product.updateOne({ _id: id }, req.body)
+    req.flash("success", `Đã cập nhật thành công sản phẩm `)
+  } 
+  catch (error) {
+    req.flash("error", `Cập nhật thất bại `)
+  }
+  res.redirect(req.get("Referer"))
 };
