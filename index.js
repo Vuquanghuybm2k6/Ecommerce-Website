@@ -51,7 +51,7 @@ app.use(bodyParser.urlencoded({
 // End Body Parser
 
 
-app.set("views", "./views");
+app.set("views", `${__dirname}/views`); // thay ./ bằng dirname
 app.set("view engine", "pug");
 
 // App Locals Variables
@@ -59,7 +59,11 @@ app.locals.prefixAdmin = systemConfig.prefixAdmin; // cái biến prefix sẽ t�
 // app.locals là một câu khai báo biến
 // End App Locals Variables
 
-app.use(express.static("public")); // Cung cấp tệp tĩnh (CSS, JS, hình ảnh...) 
+
+app.use(express.static(`${__dirname}/public`)); 
+// Cung cấp tệp tĩnh (CSS, JS, hình ảnh...) , cái biến __dirname này để sử dụng khi deploy trên online
+// nếu để mỗi public thôi thì chỉ chạy đc trên local
+
 // Routes
 routeAdmin(app)
 route(app);
