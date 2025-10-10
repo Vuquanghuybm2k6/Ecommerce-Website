@@ -19,3 +19,6 @@ module.exports = () => { // 2️⃣ Export một hàm trả về cấu hình lư
 
   return storage; // 9️⃣ Trả về cấu hình storage để sử dụng trong multer
 };
+
+// Khi lưu trữ ảnh online trên cloudinary thì ta sẽ không cần sử dụng file này nữa nên ta sẽ xóa nó đi 
+

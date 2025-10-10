@@ -148,8 +148,6 @@ module.exports.create = async (req, res) => {
 
 //[POST] : /admin/products/create
 module.exports.createPost = async (req, res) => {
-
-  console.log(req.file)
   req.body.price = parseInt(req.body.price)
   req.body.discountPercentage = parseInt(req.body.discountPercentage)
   req.body.stock = parseInt(req.body.stock)
@@ -159,12 +157,8 @@ module.exports.createPost = async (req, res) => {
   } else {
     req.body.position = parseInt(req.body.position)
   }
-  if (req.file) { // check xem file ngta vừa up lên xem có tồn tại hay k rồi mới gán vào
-    req.body.thumbnail = `/uploads/${req.file.filename}` // phải có đường dẫn /uploads thì mới xem được file ảnh 
-  }
   const product = new Product(req.body) // new Product là tạo mới một sp đọc doc trên mongoose
   await product.save() // khi ta tạo mới 1 sp như ở dòng trên thì nó mới lưu ở trong model, vậy nên dòng này để lưu vào trong database
-  console.log(req.body)
   res.redirect(`${systemConfig.prefixAdmin}/products`)
 };
 
