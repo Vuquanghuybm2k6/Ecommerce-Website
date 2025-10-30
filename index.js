@@ -1,6 +1,6 @@
 const express = require('express');
 require('dotenv').config()
-
+const path = require('path')
 const database = require("./config/database.js");
 database.connect();
 
@@ -37,6 +37,11 @@ app.use(session({ // muốn dùng cái dòng này phải npm i express-session
 }));
 app.use(flash());
 // End Flash
+
+// Tiny MCE
+// chương trình soạn thảo văn bản
+app.use('/tinymce', express.static(path.join(__dirname,'node_modules','tinymce')))
+// End Tiny MCE
 
 // Method Override
 var methodOverride = require('method-override')
