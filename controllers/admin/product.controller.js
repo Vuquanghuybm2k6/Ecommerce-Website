@@ -35,13 +35,18 @@ module.exports.index = async (req, res) => {
     countProducts
   )
   // End Pagination
-  console.log(objectPagination.skip)
+  // Sort
+  const sort={}
+  if(req.query.sortKey && req.query.sortValue){
+    sort[req.query.sortKey] = req.query.sortValue // muốn truyền 1 string thì phải có ngoặc vuông 
+  }
+  else{
+  sort.position = "desc"
+  }
+  // End Sort
 
-  // TRUY VẤN DỮ LIỆU TỪ MONGODB
   const products = await Product.find(find)
-    .sort({
-      position: "desc"
-    }) // desc là sx theo giảm dần nghĩa là cái nào tạo sau thì hiển thị lên trước
+    .sort(sort) 
     .limit(objectPagination.limitItems)
     .skip(objectPagination.skip);
 

@@ -161,3 +161,41 @@ if(showAlert){
   console.log(showAlert)
 }
 // Show Alert
+
+// Sort
+const sort = document.querySelector("[sort]")
+if(sort){
+  const url = new URL(window.location.href)
+  const sortSelect = sort.querySelector("[sort-select]")
+  const sortClear = sort.querySelector("[sort-clear]")
+  sortSelect.addEventListener("change", (e)=>{
+    const value = e.target.value
+    const [sortKey, sortValue] = value.split("-")// hàm split để chia string thành 1 mảng
+    url.searchParams.set("sortKey", sortKey)
+    url.searchParams.set("sortValue", sortValue)
+    window.location.href = url.href
+  })
+  // Xóa sắp xếp
+  sortClear.addEventListener("click", ()=>{
+    url.searchParams.delete("sortKey")
+    url.searchParams.delete("sortValue")
+    window.location.href = url.href
+  })
+  // End Xóa sắp xếp
+
+  // Thêm selected cho phần option
+  // chúng ta không thể thêm selected vào trong cái phần lắng nghe sk được bỏi vì trong đó có cái hàm window.location.href = url.href
+  // mà khi cái hàm window.location.href = url.href hoạt động thì nó sẽ chuyển hướng sang trang khác
+  // khi chuyển hướng thì sẽ load lại website, mà khi load lại website thì nó sẽ làm mới lại cái hàm window.location.href = url.href,
+  // nên ta sẽ không lấy được giá trị, ta bắt buộc phải lấy giá trị trên url
+  const sortKey = url.searchParams.get("sortKey");
+  const sortValue = url.searchParams.get("sortValue");
+  if(sortKey && sortClear){
+    const stringSort  = `${sortKey}-${sortValue}`
+    console.log(stringSort)
+    const optionSelected = sortSelect.querySelector(`option[value='${stringSort}']`)
+    optionSelected.selected = true
+  }
+  // End Thêm selected cho phần option
+}
+// End Sort
