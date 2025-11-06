@@ -4,7 +4,10 @@ const filterStatusHelper = require("../../helpers/filterStatus.js")
 const searchHelper = require("../../helpers/search.js")
 const paginationHelper = require("../../helpers/pagination.js")
 const systemConfig = require("../../config/system.js")
+const createTreeHelper = require("../../helpers/createTree")
+const ProductCategory = require("../../models/product-category.model.js")
 
+// [GET]: /admin/products
 module.exports.index = async (req, res) => {
   console.log(req.query.status)
 
@@ -57,6 +60,7 @@ module.exports.index = async (req, res) => {
     pagination: objectPagination
   });
 };
+
 // [GET] /admin/products/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
   console.log(req.params) // req.params là cái biến chứa route động ( cái route mà có dấu ":")
@@ -72,6 +76,7 @@ module.exports.changeStatus = async (req, res) => {
   req.flash("success", "Cập nhật trạng thái thành công")
   res.redirect(req.get("Referer"))
 }
+
 // [PATCH] /admin/products/change-multi
 module.exports.changeMulti = async (req, res) => {
   //console.log(req.body); // phải cài đặt thư viện body-parse trong npm thì khi gửi lên mới lấy ra dc thuộc tính 
@@ -145,8 +150,14 @@ module.exports.delete = async (req, res) => {
 
 //[GET] : /admin/products/create
 module.exports.create = async (req, res) => {
+  let find = {
+    deleted : false
+  }
+  const category = await ProductCategory.find(find)
+  const newCategory = createTreeHelper.tree(category)
   res.render('admin/pages/products/create', {
     pageTitle: "Thêm mới sản phẩm",
+    category: newCategory
   });
 };
 
