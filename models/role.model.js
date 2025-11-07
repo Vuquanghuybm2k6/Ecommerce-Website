@@ -18,5 +18,5 @@ const roleSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
-const Role = mongoose.model("Product", roleSchema, "products"); // tham số thứ 3 "products" là cái tên connection trong database
+const Role = mongoose.model("Role", roleSchema, "roles"); // tham số thứ 3 "products" là cái tên connection trong database
 module.exports = Role;
