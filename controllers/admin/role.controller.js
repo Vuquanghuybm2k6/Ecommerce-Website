@@ -56,3 +56,27 @@ module.exports.editPatch = async (req,res) =>{
   }
   res.redirect(req.get("Referer"))
 }
+
+//[GET]: admin/roles/permissions
+module.exports.permissions = async (req,res) =>{
+  let find = {
+    deleted :false
+  }
+  const records = await Role.find(find)
+  res.render("admin/pages/roles/permissions",{
+    pageTitle: "Phân quyền",
+    records:records
+  })
+}
+
+//[PATCH]: admin/roles/permissions
+module.exports.permissionsPatch = async (req,res) =>{
+  // tất cả những gì mà ta gửi qua form thì những data ở ô input ở trong cái form, ta phải lấy ở trong req.body
+  const permissions = JSON.parse(req.body.permissions)
+  console.log(permissions)
+  for(const item of permissions){
+    await Role.updateOne({_id:item.id},{permissions: item.permissions})
+  }
+  req.flash("success", "Cập nhật phân quyền thành công!")
+  res.redirect(req.get("Referer"))
+}
