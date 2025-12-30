@@ -28,7 +28,7 @@ const port = process.env.PORT;
 var flash = require('express-flash') // cái key  'express-flash' là một key bất kì, đặt tên khác cũng được, chỉ mình mình biết
 app.use(cookieParser('keyboard cat')); // lưu vào trong cookie , muốn dùng được cookieParser thì phải cài npm i cookie-parser
 app.use(session({ // muốn dùng cái dòng này phải npm i express-session
-  secret: 'keyboard cat', // ❗ bắt buộc phải có
+  secret: 'keyboard cat', // bắt buộc phải có
   resave: false,
   saveUninitialized: true,
   cookie: {

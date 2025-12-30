@@ -59,7 +59,7 @@ module.exports.editPatch = async (req,res) =>{
 
 //[GET]: admin/roles/permissions
 module.exports.permissions = async (req,res) =>{
-  let find = {
+  let find = { 
     deleted :false
   }
   const records = await Role.find(find)
