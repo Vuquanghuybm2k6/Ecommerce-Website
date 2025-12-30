@@ -42,9 +42,52 @@ module.exports.createPost = async(req, res)=>{
     res.redirect(req.get("Referer"))
   }
   else{
-     req.body.password = md5('req.body.password') // md5 để mã hóa mật khẩu
+     req.body.password = md5(req.body.password) // md5 để mã hóa mật khẩu
     const record = new Account(req.body)
     await record.save()
     res.redirect(`${systemConfig.prefixAdmin}/accounts`)
   }
+}
+// [GET]: /admin/accounts/edit/:id
+module.exports.edit = async(req,res)=>{
+  let find = {
+    _id : req.params.id,
+    deleted : false
+  }
+  try{
+    const data = await Account.findOne(find)
+    const roles = await Role.find({deleted:false})
+    res.render("admin/pages/accounts/edit.pug",{
+    pageTitle: "Chỉnh sửa tài khoản",
+    data : data,
+    roles : roles
+  })
+  }
+  catch(error){
+    res.redirect(`/${systemConfig.prefixAdmin}/accounts`)
+  }
+}
+//[PATCH]: /admin/account/edit/:id
+module.exports.editPatch = async(req,res)=>{
+  const id = req.params.id
+  const emailExit = await Account.findOne({
+    _id : {$ne : id}, // khi mà chỉnh sửa thì ta phải loại trừ cái email của chính bản thân ra
+    // chỉ tìm kiếm những email nào không phải của mình để kiểm tra 
+    email: req.body.email,
+    deleted: false
+  })
+  if(emailExit){
+    req.flash("error", `Email ${req.body.email} đã tồn tại`)
+  }
+  else{
+    if(req.body.password){ // kiểm tra nếu người dùng nhập mk thì mình mã hóa
+    req.body.password = md5(req.body.password)
+  }
+  else{
+    delete req.body.password
+  }
+  await Account.updateOne({_id: id}, req.body)
+  req.flash("success", "Cập nhật tài khoản thành công!")
+  }
+  res.redirect(req.get("Referer"))
 }
