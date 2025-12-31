@@ -6,7 +6,7 @@ const accountSchema = new mongoose.Schema({
   password: String,
   token :{
     type: String,
-    default: generate.generateRandomString(20)
+    default: ()=> generate.generateRandomString(20) // phải có ()=> thì các tài khoản khác vừa lập mới không bị trùng token
   },
   phone: String,
   avatar: String,
