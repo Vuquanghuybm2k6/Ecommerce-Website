@@ -5,12 +5,13 @@ const productCategoryRoutes = require("./product-category.route")
 const roleRoutes = require("./role.route")
 const accountRoutes = require("./account.route")
 const authRoutes = require("./auth.route")
+const authMiddleware = require("../../middlewares/admin/auth.middlewares")
 module.exports = (app) => { 
     const PATH_ADMIN = systemConfig.prefixAdmin; // khai báo tách riêng ra như này để nếu mà người dùng muốn đổi tên thì chỉ cần đổi ở dòng này
-    app.use( PATH_ADMIN + "/products-category", productCategoryRoutes); 
-    app.use( PATH_ADMIN + "/dashboard", dashboardRoutes); // đi vào /admin/dashboard rồi chạy vào hàm dashboardRouters
-    app.use(PATH_ADMIN + "/products", productRoutes)
-    app.use(PATH_ADMIN + "/roles", roleRoutes)
-    app.use(PATH_ADMIN + "/accounts", accountRoutes)
+    app.use( PATH_ADMIN + "/dashboard", authMiddleware.requireAuth, dashboardRoutes); // đi vào /admin/dashboard rồi chạy vào hàm dashboardRouters
+    app.use( PATH_ADMIN + "/products-category", authMiddleware.requireAuth, productCategoryRoutes); 
+    app.use(PATH_ADMIN + "/products", authMiddleware.requireAuth,  productRoutes)
+    app.use(PATH_ADMIN + "/roles", authMiddleware.requireAuth,  roleRoutes)
+    app.use(PATH_ADMIN + "/accounts", authMiddleware.requireAuth,  accountRoutes)
     app.use(PATH_ADMIN + "/auth",authRoutes )
 }
