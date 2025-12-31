@@ -6,10 +6,10 @@ const paginationHelper = require("../../helpers/pagination.js")
 const systemConfig = require("../../config/system.js")
 const createTreeHelper = require("../../helpers/createTree")
 const ProductCategory = require("../../models/product-category.model.js")
+const Account = require("../../models/account.model.js")
 
 // [GET]: /admin/products
 module.exports.index = async (req, res) => {
-  console.log(req.query.status)
 
   const filterStatus = filterStatusHelper(req.query)
   console.log(filterStatus)
@@ -51,7 +51,14 @@ module.exports.index = async (req, res) => {
     .sort(sort) 
     .limit(objectPagination.limitItems)
     .skip(objectPagination.skip);
-
+    for(const product of products){
+      const user = await Account.findOne({
+        _id: product.createdBy.account_id
+      })
+      if(user){
+        product.accountFullName = user.fullName
+      }
+    }
   res.render('admin/pages/products/index', {
     pageTitle: "Danh sách sản phẩm", // hiển thị trên tiêu đề trang
     products: products, // dữ liệu để hiển thị danh sách sản phẩm trong 
@@ -171,6 +178,9 @@ module.exports.createPost = async (req, res) => {
     req.body.position = countProduct + 1;
   } else {
     req.body.position = parseInt(req.body.position)
+  }
+  req.body.createdBy = {
+    account_id: res.locals.user.id
   }
   const product = new Product(req.body) // new Product là tạo mới một sp đọc doc trên mongoose
   await product.save() // khi ta tạo mới 1 sp như ở dòng trên thì nó mới lưu ở trong model, vậy nên dòng này để lưu vào trong database

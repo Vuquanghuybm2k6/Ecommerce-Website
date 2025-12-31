@@ -19,11 +19,22 @@ const productSchema = new mongoose.Schema({
     slug: "title", // slug sẽ ăn theo cái title và nó sẽ chuyển về dạng san-pham-1
     unique: true // nếu có tên hai sản phẩm trùng nhau thì  nó sẽ tạo ra hai cái slug khác nhau
   },
+  createdBy:{
+    account_id: String,
+    createdAt: {
+      type: Date,
+      default: Date.now // hàm trong js để lấy ra tg hiện tại
+    }
+  },
   deleted: {
     type: Boolean,
     default: false
   },
-  deletedAt: Date // thêm thời gian xóa vào lúc nào
+  // deletedAt: Date, // thêm thời gian xóa vào lúc nào
+  deletedBy:{
+    account_id: String,
+    deletedAt: Date
+  },
 }, {
   timestamps: true
 });

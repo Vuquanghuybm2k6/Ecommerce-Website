@@ -5,6 +5,7 @@ include ../../mixins/pagination.pug
 include ../../mixins/form-change-multi.pug
 include ../../mixins/alert.pug
 include ../../mixins/sort.pug
+include ../../mixins/moment.pug
 block main 
   if(role.permissions.includes("products_view"))
     +alert-success(5000)
@@ -51,6 +52,7 @@ block main
                 th Giá
                 th Vị trí
                 th Trạng thái
+                th Người tạo
                 th Hành động
             tbody
               each item, index in products
@@ -103,6 +105,10 @@ block main
                       else
                         //- cái href="javascript: ;" để máy hiểu rằng ta đang bắt sự kiện bằng javascript 
                         div(class="badge badge-danger") Dừng hoạt động
+                  td 
+                    p #{item.accountFullName}
+                    p 
+                      +formatDate(item.createdBy.createdAt)
                   td
                     //- dùng bootstrap để css cho các nút
                     a(

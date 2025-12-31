@@ -7,7 +7,7 @@ database.connect();
 const systemConfig = require("./config/system.js")
 const session = require("express-session")
 const cookieParser = require("cookie-parser")
-
+const moment = require('moment')
 // Route
 const routeAdmin = require("./routes/admin/index.route");
 const route = require("./routes/client/index.route");
@@ -61,6 +61,7 @@ app.set("view engine", "pug");
 
 // App Locals Variables
 app.locals.prefixAdmin = systemConfig.prefixAdmin; // cái biến prefix sẽ tồn tại trong tất cả các file pug() để có thể sử dụng được các giá trị trong file system.js
+app.locals.moment = moment
 // app.locals là một câu khai báo biến
 // End App Locals Variables
 
