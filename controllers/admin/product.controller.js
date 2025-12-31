@@ -117,7 +117,10 @@ module.exports.changeMulti = async (req, res) => {
         }
       }, {
         deleted: true,
-        deletedAt: new Date()
+        deletedBy:{
+          account_id : res.locals.user.id,
+          deletedAt : new Date()
+        }
       })
       break;
     case "change-position":
@@ -141,19 +144,21 @@ module.exports.changeMulti = async (req, res) => {
   res.redirect(req.get("Referer"))
 }
 
-// Xóa mềm
-// [PATCH] /admin/products/delete/:id
+// [DELETE]: /admin/products/delete/:id
 module.exports.delete = async (req, res) => {
   const id = req.params.id;
   await Product.updateOne({
     _id: id
   }, {
     deleted: true,
-    deletedAt: new Date() // thời gian xóa vào khi nào
+    deletedBy:{
+      account_id : res.locals.user.id, // xem được tài khoản người xóa
+      deletedAt: new Date() // thời gian xóa
+    }
   });
+  req.flash("success", "Đã xóa thành công sản phẩm")
   res.redirect(req.get("Referer"))
 }
-// End xóa mềm
 
 //[GET] : /admin/products/create
 module.exports.create = async (req, res) => {
