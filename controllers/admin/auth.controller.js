@@ -3,7 +3,6 @@ const md5 = require('md5')
 const systemConfig = require("../../config/system.js")
 // [GET]: /admin/auth/login
 module.exports.login = async(req,res)=>{
-  console.log(req.cookies)
   if(req.cookies.token){ // khi cookie vẫn còn lưu token mà người dùng lại truy cập vào url "/auth/login" tức là trang đăng nhập
     // thì chúng ta sẽ không để họ vào trang đăng nhập để họ phải đăng nhập lần nữa mà chuyển hướng họ đến trang dashboard
     res.redirect(`${systemConfig.prefixAdmin}/dashboard`)
@@ -23,7 +22,6 @@ module.exports.loginPost = async(req,res)=>{
     email : email,
     deleted: false
   })
-  console.log(user)
   if(!user){
     req.flash("error", "Email không tồn tại")
     res.redirect(req.get("Referer"))

@@ -12,7 +12,6 @@ const Account = require("../../models/account.model.js")
 module.exports.index = async (req, res) => {
 
   const filterStatus = filterStatusHelper(req.query)
-  console.log(filterStatus)
   // TẠO BỘ LỌC TÌM KIẾM (find)
 
   let find = {
@@ -64,7 +63,6 @@ module.exports.index = async (req, res) => {
     // Lấy ra thông tin người cập nhật gần nhất
     const lastIndex = product.updatedBy.length-1
     const updatedBy = product.updatedBy[lastIndex]
-    console.log(updatedBy)
     if(updatedBy){
       const userUpdated = await Account.findOne({
       _id: updatedBy.account_id
@@ -154,7 +152,6 @@ module.exports.changeMulti = async (req, res) => {
       })
       break;
     case "change-position":
-      console.log(ids)
       for (const item of ids) {
         let [id, position] = item.split("-");
         position = parseInt(position)
