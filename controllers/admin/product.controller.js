@@ -38,27 +38,41 @@ module.exports.index = async (req, res) => {
   )
   // End Pagination
   // Sort
-  const sort={}
-  if(req.query.sortKey && req.query.sortValue){
+  const sort = {}
+  if (req.query.sortKey && req.query.sortValue) {
     sort[req.query.sortKey] = req.query.sortValue // muốn truyền 1 string thì phải có ngoặc vuông 
-  }
-  else{
-  sort.position = "desc"
+  } else {
+    sort.position = "desc"
   }
   // End Sort
-
+  const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date()
+    }
   const products = await Product.find(find)
-    .sort(sort) 
+    .sort(sort)
     .limit(objectPagination.limitItems)
     .skip(objectPagination.skip);
-    for(const product of products){
-      const user = await Account.findOne({
-        _id: product.createdBy.account_id
-      })
-      if(user){
-        product.accountFullName = user.fullName
-      }
+  for (const product of products) {
+    // Lấy ra thông tin người tạo
+    const user = await Account.findOne({
+      _id: product.createdBy.account_id
+    })
+    if (user) {
+      product.accountFullName = user.fullName
     }
+    // Lấy ra thông tin người cập nhật gần nhất
+    const lastIndex = product.updatedBy.length-1
+    const updatedBy = product.updatedBy[lastIndex]
+    console.log(updatedBy)
+    if(updatedBy){
+      const userUpdated = await Account.findOne({
+      _id: updatedBy.account_id
+    })
+    updatedBy.accountFullName = userUpdated.fullName
+    }
+    
+  }
   res.render('admin/pages/products/index', {
     pageTitle: "Danh sách sản phẩm", // hiển thị trên tiêu đề trang
     products: products, // dữ liệu để hiển thị danh sách sản phẩm trong 
@@ -70,10 +84,20 @@ module.exports.index = async (req, res) => {
 
 // [GET] /admin/products/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
-  console.log(req.params) // req.params là cái biến chứa route động ( cái route mà có dấu ":")
-  // lấy ra id và status 
   const status = req.params.status
   const id = req.params.id
+  const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date()
+    }
+    await Product.updateOne({
+      _id: id
+    }, {
+      ...req.body,
+      $push: {updatedBy : updatedBy} // dùng hàm này thì khi mà thay đổi phần tử, nó lưu được những ai đã sửa sản phẩm, còn nếu k dùng
+      // thì nó chỉ ghi đè và lưu người sửa đổi gần nhất
+    }
+  )
   await Product.updateOne({
     _id: id
   }, {
@@ -89,6 +113,10 @@ module.exports.changeMulti = async (req, res) => {
   //console.log(req.body); // phải cài đặt thư viện body-parse trong npm thì khi gửi lên mới lấy ra dc thuộc tính 
   const type = req.body.type
   const ids = req.body.ids.split(", ").map(id => id.trim());
+  const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date()
+    }
   switch (type) {
     case "active":
       await Product.updateMany({
@@ -96,7 +124,8 @@ module.exports.changeMulti = async (req, res) => {
           $in: ids
         }
       }, {
-        status: "active"
+        status: "active",
+        $push: {updatedBy : updatedBy}
       })
       req.flash("success", `Cập nhật trạng thái thành công ${ids.length} sản phẩm!`)
       break;
@@ -106,7 +135,8 @@ module.exports.changeMulti = async (req, res) => {
           $in: ids
         }
       }, {
-        status: "inactive"
+        status: "inactive",
+        $push: {updatedBy : updatedBy}
       })
       req.flash("success", `Cập nhật trạng thái thành công ${ids.length} sản phẩm!`)
       break;
@@ -117,9 +147,9 @@ module.exports.changeMulti = async (req, res) => {
         }
       }, {
         deleted: true,
-        deletedBy:{
-          account_id : res.locals.user.id,
-          deletedAt : new Date()
+        deletedBy: {
+          account_id: res.locals.user.id,
+          deletedAt: new Date()
         }
       })
       break;
@@ -128,12 +158,11 @@ module.exports.changeMulti = async (req, res) => {
       for (const item of ids) {
         let [id, position] = item.split("-");
         position = parseInt(position)
-        console.log(id)
-        console.log(position)
         await Product.updateOne({
           _id: id
         }, {
-          position: position
+          position: position,
+          $push: {updatedBy : updatedBy}
         }) // không thể updateMany được vì có nhiều sản phẩm và nhiều position khác nhau
       }
       // await Product.updateMany({ _id: { $in : ids }}, {deleted: true, deletedAt : new Date() })
@@ -151,8 +180,8 @@ module.exports.delete = async (req, res) => {
     _id: id
   }, {
     deleted: true,
-    deletedBy:{
-      account_id : res.locals.user.id, // xem được tài khoản người xóa
+    deletedBy: {
+      account_id: res.locals.user.id, // xem được tài khoản người xóa
       deletedAt: new Date() // thời gian xóa
     }
   });
@@ -163,7 +192,7 @@ module.exports.delete = async (req, res) => {
 //[GET] : /admin/products/create
 module.exports.create = async (req, res) => {
   let find = {
-    deleted : false
+    deleted: false
   }
   const category = await ProductCategory.find(find)
   const newCategory = createTreeHelper.tree(category)
@@ -201,12 +230,14 @@ module.exports.edit = async (req, res) => {
       _id: req.params.id
     }
     const product = await Product.findOne(find)
-    const category = await ProductCategory.find({deleted:false})
+    const category = await ProductCategory.find({
+      deleted: false
+    })
     const newCategory = createTreeHelper.tree(category)
     res.render('admin/pages/products/edit', {
       pageTitle: "Chỉnh sửa sản phẩm",
       product: product,
-      category : newCategory
+      category: newCategory
     });
   } catch (error) {
     res.redirect(`${systemConfig.prefixAdmin}/products`)
@@ -231,10 +262,20 @@ module.exports.editPatch = async (req, res) => {
   }
   console.log(req.body)
   try {
-    await Product.updateOne({ _id: id }, req.body)
+    const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date()
+    }
+    await Product.updateOne({
+      _id: id
+    }, {
+      ...req.body,
+      $push: {updatedBy : updatedBy} // dùng hàm này thì khi mà thay đổi phần tử, nó lưu được những ai đã sửa sản phẩm, còn nếu k dùng
+      // thì nó chỉ ghi đè và lưu người sửa đổi gần nhất
+    }
+  )
     req.flash("success", `Đã cập nhật thành công sản phẩm `)
-  } 
-  catch (error) {
+  } catch (error) {
     req.flash("error", `Cập nhật thất bại `)
   }
   res.redirect(req.get("Referer"))
@@ -247,7 +288,7 @@ module.exports.detail = async (req, res) => {
       deleted: false,
       _id: req.params.id
     }
-    
+
     const product = await Product.findOne(find)
 
 
@@ -255,8 +296,7 @@ module.exports.detail = async (req, res) => {
       pageTitle: product.title,
       product: product
     });
-  }
-  catch (error) {
+  } catch (error) {
     res.redirect(`${systemConfig.prefixAdmin}/products`)
   }
 };
