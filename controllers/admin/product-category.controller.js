@@ -47,7 +47,7 @@ module.exports.edit = async (req,res) =>{
   try{
     const id = req.params.id
   const data = await ProductCategory.findOne({_id:id, deleted:false})
-  const records = await ProductCategory.find({deleted:false})
+  const records = await ProductCategory.find({deleted:false}) 
   const newRecords = createTreeHelper.tree(records)
   res.render('admin/pages/products-category/edit',{
     pageTitle: "Chỉnh sửa danh mục sản phẩm",
