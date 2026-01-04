@@ -22,7 +22,6 @@ module.exports.create = async (req, res) => {
   }
   const records = await ProductCategory.find(find).sort({position:"asc"})
   const newRecords = createTreeHelper.tree(records)
-  console.log(newRecords)
   res.render('admin/pages/products-category/create', {
     pageTitle: "Tạo danh mục sản phẩm",
     records : newRecords

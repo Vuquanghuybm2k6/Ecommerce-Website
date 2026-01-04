@@ -243,7 +243,6 @@ module.exports.edit = async (req, res) => {
 
 //[PATCH] : /admin/products/edit/:id
 module.exports.editPatch = async (req, res) => {
-  console.log(req.body);
   res.send("ok")
 };
 
@@ -257,7 +256,6 @@ module.exports.editPatch = async (req, res) => {
   if (req.file) { // check xem file ngta vừa up lên xem có tồn tại hay k rồi mới gán vào
     req.body.thumbnail = `/uploads/${req.file.filename}` // phải có đường dẫn /uploads thì mới xem được file ảnh 
   }
-  console.log(req.body)
   try {
     const updatedBy = {
       account_id: res.locals.user.id,

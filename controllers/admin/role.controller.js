@@ -73,7 +73,6 @@ module.exports.permissions = async (req,res) =>{
 module.exports.permissionsPatch = async (req,res) =>{
   // tất cả những gì mà ta gửi qua form thì những data ở ô input ở trong cái form, ta phải lấy ở trong req.body
   const permissions = JSON.parse(req.body.permissions)
-  console.log(permissions)
   for(const item of permissions){
     await Role.updateOne({_id:item.id},{permissions: item.permissions})
   }
