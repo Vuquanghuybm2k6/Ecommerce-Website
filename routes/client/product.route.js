@@ -5,5 +5,6 @@ const router = express.Router(); // Tạo một Router riêng biệt, dùng đ�
 const controller = require("../../controllers/client/product.controller")
 
 router.get('/', controller.index);
-router.get('/:slug', controller.detail);
+router.get('/:slugCategory', controller.category);
+// router.get('/:slug', controller.detail);
 module.exports = router; //Export router để có thể import nó vào file khác (thường là index.route.js )
