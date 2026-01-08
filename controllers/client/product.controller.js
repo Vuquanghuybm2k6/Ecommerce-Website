@@ -17,21 +17,31 @@ module.exports.index = async (req, res) => {
   });
 }
 
-// [GET]: /products/:slug
+// [GET]: /products/:slugProduct
 module.exports.detail = async (req, res) => {
   try {
     const find = {
       deleted: false,
-      slug: req.params.slug,
+      slug: req.params.slugProduct,
       status : "active"
     }
     const product = await Product.findOne(find)
+    if(product.product_category_id){
+      const category = await ProductCategory.findOne({
+        _id : product.product_category_id,
+        status : "active",
+        deleted: false
+      })
+      product.category = category
+    }
+    product.priceNew = productsHelper.priceNewProduct(product) // lấy ra giá mới của sp sau khi vào trang chi tiết
     res.render('client/pages/products/detail', {
       pageTitle: product.title,
       product: product
     });
   } catch (error) {
     res.redirect(`/products`)
+    console.log("Error")
   }
 
 };
@@ -52,7 +62,6 @@ module.exports.category = async (req,res) =>{
   // map() sẽ chuyển mảng object → mảng id
   // Ví dụ: [{id: 1}, {id: 2}] → [1, 2]
  const listSubCategoryId = listSubCategory.map(item => item.id)
- console.log(listSubCategoryId)
   // 🔹 Lấy danh sách sản phẩm thuộc danh mục hiện tại
   // $in dùng để tìm các sản phẩm có product_category_id
   // nằm trong mảng ID truyền vào

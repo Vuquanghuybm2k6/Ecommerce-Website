@@ -6,5 +6,5 @@ const controller = require("../../controllers/client/product.controller")
 
 router.get('/', controller.index);
 router.get('/:slugCategory', controller.category);
-// router.get('/:slug', controller.detail);
+router.get('/detail/:slugProduct', controller.detail);
 module.exports = router; //Export router để có thể import nó vào file khác (thường là index.route.js )
