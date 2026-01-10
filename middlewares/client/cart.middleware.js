@@ -12,7 +12,11 @@ module.exports.cartId = async (req,res,next) =>{
     // tham số thứ ba trong res.cookie là biến đặt thời gian hết hạn cho cookie
   }
   else{ // khi đã có giỏ hàng
-
+    const cart = await Cart.findOne({
+      _id: req.cookies.cartId
+    })
+    cart.totalQuantity = cart.products.reduce((sum,item)=>sum+item.quantity, 0)
+    res.locals.miniCart = cart
   }
   next()
 }
