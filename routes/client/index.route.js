@@ -3,12 +3,14 @@ const homeRoutes = require("./home.route") //Import route riêng của phần s�
 const categoryMiddleware = require("../../middlewares/client/category.middleware")
 const searchRoutes = require("./search.route")
 const cartMiddleware = require("../../middlewares/client/cart.middleware")
+const userMiddleware = require("../../middlewares/client/user.middleware")
 const cartRoutes = require("./cart.route")
 const checkoutRoutes = require("./checkout.route")
 const userRoutes = require("./user.route")
 module.exports = (app) => { // Export ra một hàm nhận tham số là app (chính là biến const app = express() trong file index.js )
   app.use(categoryMiddleware.category) // cái này sử dụng để đỡ phải gọi nhiều lần cái app.use('/products', categoryMiddleware.category, productRouters);, sau này có nhiều trang sử dụng cái này thì chỉ cần gọi 1 lần như này là được
   app.use(cartMiddleware.cartId)
+  app.use(userMiddleware.infoUser)
   // Khi người dùng truy cập vào '/' (trang chủ),
   // thì Express sẽ sử dụng các route được định nghĩa trong homeRouters
   app.use('/', homeRoutes)
