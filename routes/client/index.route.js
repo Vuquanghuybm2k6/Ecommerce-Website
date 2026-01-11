@@ -5,6 +5,7 @@ const searchRoutes = require("./search.route")
 const cartMiddleware = require("../../middlewares/client/cart.middleware")
 const cartRoutes = require("./cart.route")
 const checkoutRoutes = require("./checkout.route")
+const userRoutes = require("./user.route")
 module.exports = (app) => { // Export ra một hàm nhận tham số là app (chính là biến const app = express() trong file index.js )
   app.use(categoryMiddleware.category) // cái này sử dụng để đỡ phải gọi nhiều lần cái app.use('/products', categoryMiddleware.category, productRouters);, sau này có nhiều trang sử dụng cái này thì chỉ cần gọi 1 lần như này là được
   app.use(cartMiddleware.cartId)
@@ -18,4 +19,5 @@ module.exports = (app) => { // Export ra một hàm nhận tham số là app (ch
   app.use('/search', searchRoutes)
   app.use('/cart', cartRoutes)
   app.use('/checkout',checkoutRoutes)
+  app.use('/user',userRoutes)
 }
