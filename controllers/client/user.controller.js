@@ -3,6 +3,7 @@ const md5 = require("md5")
 const ForgotPassword = require("../../models/forgot-password.model")
 const generateHelper = require("../../helpers/generate")
 const sendMailHelper = require("../../helpers/sendMail")
+const Cart = require("../../models/cart.model")
 //  [GET] /user/register
 module.exports.register = async (req, res) => {
   res.render('client/pages/user/register', {
@@ -23,7 +24,6 @@ module.exports.registerPost = async (req, res) => {
   req.body.password = md5(req.body.password)
   const user = new User(req.body)
   await user.save()
-  console.log(user)
   res.cookie("tokenUser", user.tokenUser)
   res.redirect("/")
 }
@@ -57,6 +57,12 @@ module.exports.loginPost = async (req, res) => {
     return
   }
   res.cookie("tokenUser", user.tokenUser)
+  // Lưu user_id  vào collection carts để sau này có thể mở rộng bài toán hơn
+  await Cart.updateOne({  
+    _id: req.cookies.cartId
+  },{
+    user_id: user.id
+  })
   res.redirect("/")
 }
 //  [GET] /user/logout
@@ -91,7 +97,6 @@ module.exports.forgotPasswordPost = async (req, res) => {
   }
   const forgotPassword = new ForgotPassword(objectForgotPassword)
   await forgotPassword.save()
-  console.log(objectForgotPassword)
   // Việc 2: Gửi mã OTP qua email của user
   const subject = `Mã OTP xác minh lấy lại mật khẩu`
   const html = `Mã OTP xác mình lấy lại mật khẩu là <b>${otp}</b> .Thời hạn sử dụng là 3 phút. Lưu ý không được để lộ mã OTP`
@@ -118,7 +123,6 @@ module.exports.otpPasswordPost = async (req, res) => {
     email:email,
     otp:otp
   })
-  console.log(result)
   if(!result){
     req.flash("error", `OTP không hợp lệ!`)
     res.redirect(req.get("Referer"))
