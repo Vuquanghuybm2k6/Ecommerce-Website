@@ -75,6 +75,12 @@ routeAdmin(app)
 route(app);
 // Routes
 
+app.use((req, res) => {
+  res.status(404).render("client/pages/errors/404", { // cái này nên đặt ở cuối file index
+    pageTitle: "404 Not Found"
+  });
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port   ${port}`)
 })
