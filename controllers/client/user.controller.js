@@ -150,3 +150,11 @@ module.exports.resetPasswordPost = async (req, res) => {
   res.redirect("/")
   
 }
+//  [GET] /user/info
+module.exports.info = async (req, res) => {
+  const email = req.query.email
+  res.render("client/pages/user/info",{
+    pageTitle: "Thông tin tài khoản",
+    email: email,
+  })
+}
